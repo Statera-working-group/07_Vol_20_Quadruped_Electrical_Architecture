@@ -1,0 +1,255 @@
+**Volume 20. Quadruped Electrical Architecture**
+
+# Chapter 04. Actuator Electrical Architecture
+
+## 04.01. Joint Module Overview
+
+![](images/image1.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+사족보행 로봇 관절 모듈(Quadruped Joint Module)은 전기에너지(Electrical Energy)와 디지털 모션 명령(Digital Motion Command)을 제어된 관절 토크(Joint Torque), 위치(Position), 속도(Velocity)로 변환하는 기본적인 전기기계식 구성 요소(Electromechanical Building Block)이다. 사족보행 로봇(Quadruped Robot)의 아키텍처에서는 여러 관절 모듈이 엉덩이 관절(Hip), 상부 다리(Upper Leg), 무릎(Knee) 영역에 분산 배치되어 보행(Locomotion), 자세 제어(Posture Control), 균형(Balance), 지형과의 상호작용(Terrain Interaction)을 지원하는 긴밀하게 협조된 액추에이터 네트워크(Actuator Network)를 구성한다.
+
+강체 프레임(Rigid Machine Frame)에 설치되는 일반적인 산업용 서보 축(Industrial Servo Axis)과 달리, 사족보행 로봇의 관절(Quadruped Joint)은 지속적으로 변화하는 방향(Orientation), 충격 하중(Impact Loading), 가속도(Acceleration), 진동(Vibration), 외부 교란(External Disturbance) 조건에서 동작한다. 따라서 전기 아키텍처(Electrical Architecture)는 액추에이터를 단순히 독립된 모터와 드라이브의 조합으로 취급하는 것이 아니라 기계식 변속기(Mechanical Transmission), 모터(Motor), 센싱 시스템(Sensing System), 열전달 경로(Thermal Path), 통신 인터페이스(Communication Interface), 로컬 제어 전자장치(Local Control Electronics)와 함께 통합적으로 설계해야 한다.
+
+모듈의 중심에는 일반적으로 높은 토크 밀도(High Torque Density)를 갖는 브러시리스 모터(Brushless Motor)가 위치하며, 요구되는 제어 전략(Control Strategy)과 전자기 설계(Electromagnetic Design)에 따라 BLDC(Brushless DC Motor) 또는 PMSM(Permanent Magnet Synchronous Motor) 토폴로지(Topology)가 적용된다. 모터는 직류 버스 전력(DC-Bus Power)을 기계적 회전(Mechanical Rotation)으로 변환하고, 감속 기구(Reduction Mechanism)는 모터의 속도와 토크를 관절 요구조건에 맞게 조정한다. 모터 선정 시에는 연속 토크(Continuous Torque), 최대 토크(Peak Torque), 속도 범위(Speed Range), 효율(Efficiency), 관성(Inertia), 열적 한계(Thermal Limits), 회생 운전 조건(Regenerative Operating Conditions)을 함께 고려해야 한다.
+
+모터 드라이버(Motor Driver)는 로봇의 전력 버스(Power Bus)와 모터 권선(Motor Windings) 사이의 전력전자 인터페이스(Power-Electronic Interface)를 구성한다. 일반적으로 3상 인버터(Three-Phase Inverter), 게이트 드라이버(Gate Driver), 전류 센싱(Current Sensing), 전압 모니터링(Voltage Monitoring), 온도 측정(Temperature Measurement), 보호 회로(Protection Circuit)를 통합한다. 고속 전류 제어(High-Rate Current Control)를 통해 모듈은 전자기 토크(Electromagnetic Torque)를 조절하며, 위치 및 속도 루프(Position and Velocity Loops)는 분산 제어 아키텍처(Distributed-Control Architecture)에 따라 로컬에서 수행되거나 상위 실시간 제어기(Higher-Level Real-Time Controller)에 의해 조정될 수 있다.
+
+관절 위치 피드백(Joint Position Feedback)은 일반적으로 모터 축(Motor Shaft), 관절 출력부(Joint Output), 또는 양쪽 모두에 설치된 엔코더(Encoder)를 통해 획득한다. 모터 측 센싱(Motor-Side Sensing)은 정밀한 정류(Commutation)와 고대역폭 제어(High-Bandwidth Control)를 지원하며, 출력 측 센싱(Output-Side Sensing)은 변속기 영향을 거친 실제 기계적 관절 위치를 측정할 수 있다. 이중 센싱(Dual Sensing)은 백래시(Backlash), 컴플라이언스(Compliance), 변속기 변형(Transmission Deformation), 비정상 움직임(Abnormal Motion)을 파악할 수 있어 제어 성능(Control Performance), 캘리브레이션(Calibration), 진단(Diagnostics), 기능 모니터링(Functional Monitoring)에 유용한 정보를 제공한다.
+
+토크 정보(Torque Information)는 사족보행 로봇의 이동이 제어된 상호작용 힘(Controlled Interaction Force)에 크게 의존하기 때문에 또 하나의 중요한 피드백 채널(Feedback Channel)을 제공한다. 토크는 상전류(Phase Current)와 모터 상수(Motor Constant)를 이용하여 추정하거나 기계적 하중 경로(Mechanical Load Path)에 통합된 전용 토크 센서(Torque Sensor)를 통해 직접 측정할 수 있다. 직접 센싱(Direct Sensing)은 힘 제어(Force Control)와 접촉 추정(Contact Estimation)을 향상시킬 수 있으며, 전류 기반 추정(Current-Based Estimation)은 하드웨어 복잡도를 낮추지만 마찰(Friction), 변속기 효율(Transmission Efficiency), 온도(Temperature), 정확한 모터 특성화(Motor Characterization)에 영향을 받는다.
+
+관절 전자장치(Joint Electronics)는 결정론적 네트워크(Deterministic Network)를 통해 로봇의 실시간 제어 시스템(Real-Time Control System)과 통신해야 한다. 보다 넓은 사족보행 로봇 아키텍처에서는 액추에이터 수준 통신(Actuator-Level Communication)에 CAN FD 또는 EtherCAT을 적용할 수 있으며, 기가비트 이더넷(Gigabit Ethernet)과 ROS 2/DDS는 상위 컴퓨팅 및 시스템 통합 계층(Higher Computing and System-Integration Layers)을 담당할 수 있다. 액추에이터 인터페이스(Actuator Interface)는 명령(Command), 피드백(Feedback), 진단 상태(Diagnostic Status), 타임스탬프(Timestamp), 동작 모드(Operating Mode), 고장 정보(Fault Information)를 예측 가능한 지연시간(Predictable Latency)으로 전달해야 한다.
+
+관절 모듈로의 전력 분배(Power Distribution)는 보행(Walking), 달리기(Running), 점프(Jumping), 자세 복구(Recovery), 교란 억제(Disturbance Rejection) 과정에서 큰 과도 전류(Transient Current)가 발생할 수 있으므로 매우 동적인 부하(Dynamic Load)를 수용해야 한다. 여러 액추에이터가 동시에 최대 토크(Peak Torque)를 요구하면 버스 전압 변동(Bus-Voltage Variation)과 상당한 배터리 부하(Battery Loading)가 발생한다. 반대로 관절 감속 시에는 회생 에너지(Regenerative Energy)가 직류 버스(DC Bus)로 반환될 수 있다. 따라서 관절 아키텍처는 로봇의 48V 또는 72V 전력 아키텍처(Power Architecture) 및 전력 분배 장치 보호 전략(PDU Protection Strategy)과 일관되게 동작해야 한다.
+
+인버터(Inverter) 근처에 배치되는 로컬 에너지 저장장치(Local Energy Storage)와 직류 링크 커패시턴스(DC-Link Capacitance)는 빠른 스위칭과 토크 과도현상(Torque Transient) 동안 전원 공급을 안정화하는 데 도움을 준다. 이들의 배치(Placement), 정전용량(Capacitance), 리플 전류 허용 능력(Ripple-Current Capability), 온도 정격(Temperature Rating), 연결 임피던스(Connection Impedance)는 액추에이터 성능과 전자기 적합성(Electromagnetic Compatibility)에 모두 영향을 미친다. 과전류(Overcurrent), 과전압(Overvoltage), 저전압(Undervoltage), 역전압 조건(Reverse Conditions), 단락(Short Circuit), 과도한 온도(Excessive Temperature)에 대한 보호 기능은 국부적인 액추에이터 고장이 공유 전력 네트워크(Shared Power Network) 전체로 확산되지 않도록 충분히 빠르게 동작해야 한다.
+
+열 관리(Thermal Management)는 관절 전기 설계(Joint Electrical Design)와 분리할 수 없는 요소이다. 모터의 동손(Copper Loss), 인버터의 스위칭 및 도통 손실(Switching and Conduction Losses), 변속기 손실(Transmission Losses), 반복적인 최대 토크 동작(Peak-Torque Events)은 소형 인클로저(Compact Enclosure) 내부에서 열을 발생시킨다. 모터 권선(Motor Windings), 전력 반도체(Power Semiconductors), PCB 영역, 구조적 열전달 경로(Structural Heat Paths) 주변에 배치된 온도 센서(Temperature Sensor)를 이용하면 열 디레이팅(Thermal Derating)과 셧다운 전략(Shutdown Strategy)을 구현할 수 있다. 목표는 부품이나 절연체의 한계를 초과하지 않으면서 사용 가능한 토크를 최대화하는 것이다.
+
+기계적 패키징(Mechanical Packaging)은 관절 주변의 모든 전기 경로가 반복적인 움직임에 노출되기 때문에 배선(Wiring)과 커넥터(Connector)에 특별한 제약조건을 부여한다. 전력 도체(Power Conductor), 엔코더 라인(Encoder Line), 센서 인터페이스(Sensor Interface), 통신 케이블(Communication Cable)은 굽힘(Bending), 비틀림(Torsion), 진동(Vibration), 수백만 회의 반복 운동(Motion Cycles)을 견뎌야 한다. 따라서 사족보행 로봇의 전기 아키텍처에서는 다리 플렉스 하네스(Leg Flex Harness), 동적 케이블 라우팅(Dynamic Cable Routing), 환경 밀봉(Environmental Sealing), 커넥터 선정(Connector Selection), 정비성 설계(Serviceability Design)를 단순한 패키징 문제가 아니라 독립적인 엔지니어링 영역으로 다룬다.
+
+모듈형 관절 아키텍처(Modular Joint Architecture)는 전기적, 기계적, 통신 인터페이스가 표준화되어 있을 경우 로봇의 조립(Assembly)과 유지보수(Maintenance)를 단순화할 수 있다. 하나의 모듈은 정의된 직류 전력(DC Power), 네트워크 통신(Network Communication), 동기화(Synchronization), 진단(Diagnostic), 서비스 인터페이스(Service Interface)를 제공하면서 내부의 모터 제어 구현 세부사항을 캡슐화(Encapsulation)할 수 있다. 이러한 모듈성(Modularity)은 고장난 액추에이터 교체, 서로 다른 관절 유형의 구성 관리(Configuration Management), 제어된 펌웨어 배포(Firmware Deployment), 여러 다리 또는 로봇 파생 모델 간 공통 전자장치 재사용을 지원한다.
+
+관절 수준 진단(Joint-Level Diagnostics)은 모터 전류(Motor Current), 버스 전압(Bus Voltage), 엔코더 유효성(Encoder Validity), 토크 센서 타당성(Torque-Sensor Plausibility), 온도(Temperature), 통신 품질(Communication Quality), 제어기 상태(Controller State), 내부 보호 이벤트(Protection Event)를 지속적으로 평가해야 한다. 이러한 관측을 통해 시스템은 일시적인 과부하(Transient Overload)와 지속적인 고장(Persistent Fault)을 구분할 수 있다. 이후 관절 모듈 진단(Joint-Module Diagnostics) 절에서는 이 개념을 구체화하며, 시스템 상태 모니터링(System Health Monitoring), CAN 진단(CAN Diagnostics), 이벤트 로깅(Event Logging), 원격 진단(Remote Diagnostics), 예지 정비(Predictive Maintenance)는 보다 상위의 아키텍처 수준에서 다루어진다.
+
+고장 처리(Fault Handling)는 단순히 전기적 오류를 보고하는 것에 그치지 않고 액추에이터 성능 저하가 물리적으로 초래하는 결과를 고려해야 한다. 하나의 관절 기능이 상실되는 것만으로도 즉시 하중 분포(Load Distribution)와 로봇 안정성(Robot Stability)이 변화할 수 있다. 따라서 모듈은 상위 감독 제어기(Supervisory Controller)가 토크를 제한할 것인지, 해당 다리의 하중을 제거할 것인지, 이동을 보다 안전한 모드(Safe Mode)로 전환할 것인지, 또는 로봇 전체를 정지할 것인지 판단할 수 있도록 충분히 명확한 고장 상태(Fault State)를 제공해야 한다. 전기적 보호(Electrical Protection)와 모션 수준 안전(Motion-Level Safety)은 상호 협조된 계층으로 동작해야 한다.
+
+관절 측정값 사이의 시간 일관성(Time Consistency)은 제어 대역폭(Control Bandwidth)과 로봇의 동적 성능(Dynamic Performance)이 증가할수록 더욱 중요해진다. 서로 다른 물리적 위치에서 수집되는 엔코더(Encoder), 토크(Torque), 관성측정장치(IMU), 액추에이터 상태(Actuator State) 정보는 로봇 움직임에 대한 시간적으로 일관된 관측을 제공해야 한다. 따라서 사족보행 로봇 아키텍처는 컴퓨팅 및 네트워크 수준에서 정밀 시간 프로토콜 시간 동기화(PTP Time Synchronization)와 통신 동기화(Communication Synchronization)를 별도의 핵심 주제로 포함한다. 관절 전자장치는 동기화된 피드백이 필요한 경우 관련 시간 정보를 유지해야 한다.
+
+궁극적으로 관절 모듈(Joint Module)은 단순한 모터 어셈블리(Motor Assembly)가 아니라 지능형 분산 액추에이터(Intelligent Distributed Actuator)로 이해해야 한다. 하나의 모듈 내부에서 전력 변환(Power Conversion), 전자기 구동(Electromagnetic Actuation), 센싱(Sensing), 로컬 컴퓨팅(Local Computing), 통신(Communication), 보호(Protection), 열 상태 감시(Thermal Supervision), 진단 지능(Diagnostic Intelligence)이 하나의 통합된 서브시스템(Coordinated Subsystem)으로 결합된다. 관절 모듈의 완성도는 토크 대역폭(Torque Bandwidth), 이동 정밀도(Locomotion Precision), 에너지 효율(Energy Efficiency), 강건성(Robustness), 유지보수성(Maintainability), 그리고 상위 피지컬 AI(Physical AI) 기능이 달성할 수 있는 전체 성능에 직접적인 영향을 미친다.
+
+이러한 모듈 중심 관점(Modular Viewpoint)은 액추에이터 전기 아키텍처(Actuator Electrical Architecture)의 이후 내용을 이해하기 위한 기반을 제공한다. 다음 절에서는 BLDC/PMSM 선정(BLDC/PMSM Selection), 통합 모터 드라이버(Integrated Motor Driver), 엔코더 인터페이스(Encoder Interface), 토크 센서 인터페이스(Torque-Sensor Interface), 관절 모듈 진단(Joint-Module Diagnostics)을 각각 구체적으로 다룬다. 이러한 요소들은 배터리 전력(Battery Power)과 실시간 명령(Real-Time Command)이 각 사족보행 로봇 관절에서 정확하게 측정되고 안전하게 제어되는 물리적 움직임(Physical Motion)으로 변환되는 전체 전기적 경로(Electrical Pathway)를 정의한다.
+
+## 04.02. BLDC/PMSM Selection
+
+![](images/image2.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+브러시리스 직류 모터(BLDC, Brushless DC Motor)와 영구자석 동기 모터(PMSM, Permanent Magnet Synchronous Motor) 사이의 선택은 모터가 토크 밀도(Torque Density), 제어 대역폭(Control Bandwidth), 효율(Efficiency), 열적 거동(Thermal Behavior), 음향 특성(Acoustic Characteristics), 액추에이터 크기(Actuator Size)를 직접 결정하기 때문에 사족보행 로봇 관절 설계(Quadruped Joint Design)의 기본적인 의사결정이다. 따라서 적절한 모터는 단순히 정격 토크(Nominal Torque)나 정격 출력(Rated Power)만을 기준으로 선정하는 것이 아니라 전체 관절 동작 영역(Joint Operating Envelope)을 기준으로 선정해야 한다.
+
+사족보행 로봇의 이동(Quadruped Locomotion)은 매우 동적인 모터 듀티 사이클(Motor Duty Cycle)을 형성한다. 하나의 관절은 가속(Acceleration), 하중 지지(Load Support), 충격 흡수(Impact Absorption), 회생 제동(Regenerative Braking), 준정적 토크 생성(Near-Static Torque Production) 사이를 빠르게 전환할 수 있다. 엉덩이 및 무릎 액추에이터(Hip and Knee Actuator)는 연속 운전 조건과 크게 다른 단시간 최대 부하(Short-Duration Peak Load)를 받을 수 있다. 따라서 모터 선정에서는 연속 토크(Continuous Torque), 최대 토크(Peak Torque), 최대 속도(Maximum Speed), 실효 전류(RMS Current), 최대 전류(Peak Current), 허용 열 축적(Allowable Thermal Accumulation)을 구분해야 한다.
+
+BLDC와 PMSM은 일반적으로 회전자(Rotor)에 영구자석(Permanent Magnet)을 사용하고 전자적으로 제어되는 고정자 권선(Stator Winding)을 사용하기 때문에 중요한 물리적 특성을 공유한다. 실질적인 차이는 역기전력 파형(Back-Electromotive-Force Waveform), 권선 구성(Winding Configuration), 제어 방식(Control Method)과 밀접하게 관련된다. BLDC 시스템은 전통적으로 사다리꼴 역기전력(Trapezoidal Back-EMF)과 블록 정류(Block Commutation)를 사용하는 반면, PMSM 시스템은 일반적으로 정현파 역기전력(Sinusoidal Back-EMF)과 정현파 전류 구동(Sinusoidal Current Excitation)을 중심으로 설계된다.
+
+소형 사족보행 로봇 관절(Compact Quadruped Joint)에서는 부드러운 토크 생성(Smooth Torque Production)과 정밀한 동적 제어(Precise Dynamic Control)가 요구될 경우 자속 기준 제어(FOC, Field-Oriented Control)를 적용한 PMSM 구동 방식이 특히 유리하다. FOC는 측정된 상전류(Phase Current)를 회전 기준 좌표계(Rotating Reference Frame)의 성분으로 변환하여 자기 자속(Magnetic Flux)과 토크 생성 전류(Torque-Producing Current)를 독립적으로 제어할 수 있게 한다. 이를 통해 넓은 동작 영역에서 정밀한 토크 제어가 가능하며 균형 제어(Balance Control)와 유연한 이동(Compliant Locomotion)에 필요한 고대역폭 동작(High-Bandwidth Behavior)을 지원한다.
+
+일반적인 6단계 정류(Six-Step Commutation)를 사용하는 BLDC 구현은 토크 리플(Torque Ripple)이 허용되는 응용 분야에서 비교적 단순한 제어 전자장치(Control Electronics)와 효율적인 운전을 제공할 수 있다. 그러나 동적으로 균형을 유지해야 하는 로봇에서는 토크 리플, 정류 과정의 교란(Commutation Disturbance), 음향 진동(Acoustic Excitation)이 바람직하지 않을 수 있다. 또한 상업적으로 BLDC라고 불리는 최신 모터도 정현파 제어(Sinusoidal Control) 또는 FOC를 사용하여 구동할 수 있으므로, 모터 선정은 단순한 명칭보다는 실제 전자기적 특성(Electromagnetic Characteristics)과 제어 특성(Control Characteristics)을 기준으로 수행해야 한다.
+
+토크 밀도(Torque Density)는 모든 액추에이터가 다리 질량(Leg Mass)과 회전 관성(Rotational Inertia)에 직접 영향을 미치기 때문에 가장 중요한 선정 기준 중 하나이다. 다리의 말단부 질량(Distal Leg Mass)이 증가하면 다리를 가속하고 감속하는 데 필요한 에너지가 증가하며 이동 효율(Locomotion Efficiency)이 감소할 수 있다. 따라서 높은 자기 부하(Magnetic Loading), 최적화된 권선 설계(Optimized Winding Design), 효과적인 냉각(Effective Cooling), 소형 기계 통합(Compact Mechanical Integration)은 특히 무릎과 같이 빠르게 움직이는 관절 위치의 모터 선정에서 중요하다.
+
+모터 속도(Motor Speed)는 기계적 감속비(Mechanical Reduction Ratio)와 함께 고려해야 한다. 고속 모터와 감속 기구(Reduction Mechanism)를 조합하면 소형 전자기 기계(Electromagnetic Machine)에서 높은 출력 토크를 얻을 수 있지만, 지나치게 높은 감속비는 반사 관성(Reflected Inertia), 마찰(Friction), 기계적 손실(Mechanical Loss)을 증가시키고 역구동성(Backdrivability)을 저하시킬 수 있다. 반대로 낮은 감속비는 더 높은 모터 토크를 요구한다. 따라서 모터와 기어박스(Gearbox)는 결합된 액추에이터 최적화 문제(Coupled Actuator Optimization Problem)로 선정해야 한다.
+
+모터의 토크-속도 동작 영역(Torque-Speed Envelope)은 정상적인 이동뿐만 아니라 과도 동작(Transient Maneuver)까지 전기적 또는 열적 한계 부근에서 과도하게 운전하지 않고 수용할 수 있어야 한다. 보행(Walking)은 연속 효율(Continuous Efficiency)과 중간 수준의 토크를 중요하게 요구할 수 있지만, 달리기(Running), 점프(Jumping), 계단 이동(Stair Negotiation), 교란 복구(Disturbance Recovery), 빠른 자세 변화(Rapid Posture Change)는 훨씬 높은 순간 출력(Instantaneous Power)을 요구할 수 있다. 반복적인 과도 동작으로 모터 온도가 허용 범위를 지속적으로 초과하지 않도록 충분한 설계 여유(Design Margin)를 확보해야 한다.
+
+사족보행 로봇의 전력 아키텍처(Power Architecture)와 전기적으로 호환되는지도 중요하다. 모터 권선(Motor Winding)과 인버터(Inverter)는 사용 가능한 48V 또는 72V 직류 버스(DC Bus), 예상 전압 변동(Voltage Variation), 최대 상전류(Maximum Phase Current), 요구 속도 범위(Required Speed Range)에 맞추어 설계해야 한다. 높은 버스 전압은 동일한 전력에서 전류를 줄이고 고속 운전 능력을 향상시킬 수 있지만, 인버터 정격(Inverter Rating), 절연 요구사항(Insulation Requirement), 보호 장치(Protection Device), 커넥터(Connector), 전체 전기 안전(Electrical Safety)에도 영향을 미친다.
+
+권선 구성(Winding Configuration)은 모터 토크 상수(Motor Torque Constant), 역기전력 상수(Back-EMF Constant), 요구 전류(Current Requirement), 최대 도달 가능 속도(Maximum Achievable Speed) 사이의 관계에 큰 영향을 미친다. 단위 전류당 높은 토크를 생성하도록 최적화된 권선은 높은 회전 속도에서 전압 한계(Voltage Limit)에 더 일찍 도달할 수 있으며, 고속용 권선(High-Speed Winding)은 동일한 토크를 생성하기 위해 더 높은 전류를 요구할 수 있다. 따라서 하나의 모터 상수만을 비교하는 것이 아니라 전체 동작 맵(Operating Map)을 검토하여 선정해야 한다.
+
+모터의 연속 운전 능력(Continuous Motor Capability)은 주로 열 방출(Heat Removal)에 의해 제한된다. 동손(Copper Loss)은 대략 권선 전류의 제곱에 비례하여 증가하며, 운전 속도가 변화함에 따라 철손(Iron Loss), 자석 손실(Magnet Loss), 베어링 손실(Bearing Loss) 등의 손실도 함께 발생한다. 매우 높은 단시간 최대 토크를 제공하는 모터라도 열을 관절 하우징(Joint Housing)이나 로봇 구조체(Robot Structure)로 효과적으로 전달하지 못하면 연속 성능이 부족할 수 있다. 따라서 열 아키텍처(Thermal Architecture)는 초기 단계부터 전자기 설계 및 모터 선정과 함께 고려해야 한다.
+
+회전자 관성(Rotor Inertia) 역시 높은 동적 성능이 요구되는 관절에서 중요한 매개변수이다. 낮은 회전자 관성은 가속 응답(Acceleration Response)을 향상시키고 빠른 방향 전환 과정에서 필요한 내부 에너지를 줄일 수 있으며, 기어박스는 관절에서 관측되는 유효 관성(Effective Inertia)을 변환한다. 따라서 전체 액추에이터는 모터 관성(Motor Inertia), 변속비(Transmission Ratio), 관절 하중(Joint Load), 요구 가속도(Desired Acceleration), 제어 대역폭을 함께 고려하여 평가해야 하며, 이를 통해 실제 다리 동역학(Leg Dynamics)의 관점에서 전기적 성능을 판단할 수 있다.
+
+역구동성(Backdrivability)과 기계적 컴플라이언스(Mechanical Compliance)도 간접적으로 모터 선정에 영향을 미친다. 사족보행 로봇은 매우 강성 높은 위치 제어 장치처럼 동작하기보다 지면 접촉(Terrain Contact)과 외력(External Force)에 자연스럽게 반응할 수 있는 관절 특성이 유리한 경우가 많다. 적절한 모터 토크 능력(Motor Torque Capability), 감속비(Reduction Ratio), 토크 센싱(Torque Sensing), 제어 전략(Control Strategy)을 조합하면 액추에이터가 임피던스 제어(Impedance Control), 힘 제어(Force Control), 교란 억제(Disturbance Rejection), 환경과의 유연한 상호작용(Compliant Interaction)을 구현할 수 있다.
+
+정밀한 정류(Commutation)와 토크 제어는 신뢰성 높은 회전자 위치 정보(Rotor Position Information)에 의존하므로 모터 선정 과정에서 엔코더 요구사항(Encoder Requirements)도 함께 고려해야 한다. PMSM의 FOC는 특히 저속 운전과 시동 과정에서 정확한 전기적 회전자 각도(Electrical Rotor Angle)를 요구한다. 따라서 엔코더 해상도(Encoder Resolution), 지연시간(Latency), 인터페이스 형식(Interface Type), 기계적 장착 정확도(Mechanical Mounting Accuracy), 전기적 노이즈 내성(Electrical Noise Immunity)은 독립적인 센서 선정 항목이 아니라 액추에이터 설계의 일부가 된다.
+
+회생 운전(Regenerative Operation) 역시 사족보행 로봇의 이동에서 중요하다. 감속(Deceleration), 착지(Landing), 내리막 이동(Downhill Motion), 제어된 관절 순응 동작(Controlled Joint Yielding) 과정에서는 기계적 에너지(Mechanical Energy)가 모터를 발전기(Generator)처럼 구동하여 인버터를 통해 직류 버스로 전기 에너지를 반환할 수 있다. 선정된 모터는 예상 속도 범위에서 양방향 토크 운전(Bidirectional Torque Operation)을 견딜 수 있어야 하며, 인버터, 전력 분배 장치(PDU), 배터리(Battery), 보호 아키텍처(Protection Architecture)는 발생하는 회생 전력(Regenerative Power)을 안전하게 처리해야 한다.
+
+관절 모터는 로봇 외부에 가까운 위치에서 동작하면서 진동(Vibration), 충격(Shock), 먼지(Dust), 수분(Moisture), 큰 온도 변화(Temperature Variation)에 노출될 수 있으므로 환경 강건성(Environmental Robustness)도 고려해야 한다. 자석 고정(Magnet Retention), 베어링 설계(Bearing Design), 권선 절연(Winding Insulation), 센서 장착(Sensor Mounting), 커넥터 인터페이스(Connector Interface), 하우징 밀봉(Housing Sealing)은 모두 장기 신뢰성(Long-Term Reliability)에 영향을 미친다. 따라서 모터 검증(Motor Qualification)은 실험실 운전 조건에만 의존하지 않고 실제 현장 이동(Field Locomotion)에서 예상되는 기계적·환경적 하중을 반영해야 한다.
+
+모든 사족보행 로봇 관절에 BLDC 또는 PMSM 중 하나가 본질적으로 항상 우수하다는 보편적인 규칙은 존재하지 않는다. 올바른 선정은 부드러운 토크 생성(Smooth Torque Production), 최대 및 연속 토크(Peak and Continuous Torque), 속도 범위(Speed Range), 효율(Efficiency), 열 성능(Thermal Performance), 회전자 관성(Rotor Inertia), 제어 복잡도(Control Complexity), 패키징(Packaging), 비용(Cost), 신뢰성(Reliability) 사이의 균형을 통해 결정된다. 고성능 토크 제어 관절(High-Performance Torque-Controlled Joint)에서는 FOC 기반 PMSM 설계가 유리한 경우가 많으며, 단순한 정류와 시스템 비용이 더 중요한 경우에는 BLDC 구현도 실용적인 선택이 될 수 있다.
+
+최종적인 모터 선정은 통합 관절 모듈 수준(Integrated Joint-Module Level)에서 검증해야 한다. 모터(Motor), 인버터(Inverter), 엔코더(Encoder), 토크 센서(Torque Sensor), 기어박스(Gearbox), 열전달 경로(Thermal Path), 하네스(Harness), 통신 인터페이스(Communication Interface), 기계 구조(Mechanical Structure)를 대표적인 부하 사이클(Representative Load Cycle) 조건에서 함께 평가해야 한다. 이러한 시스템 수준 접근(System-Level Approach)은 모터 선정을 이후의 액추에이터 아키텍처 주제인 통합 모터 드라이버(Integrated Motor Driver), 엔코더 인터페이스(Encoder Interface), 토크 센싱(Torque Sensing), 관절 모듈 진단(Joint-Module Diagnostics)과 직접 연결한다.
+
+## 04.03. Integrated Motor Driver
+
+![](images/image3.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+통합 모터 드라이버(Integrated Motor Driver)는 직류 버스 에너지(DC-Bus Energy)를 사족보행 로봇 관절 모터(Quadruped Joint Motor)에 필요한 정밀하게 제어된 3상 전류(Three-Phase Current)로 변환하는 로컬 전력전자 및 제어 서브시스템(Local Power-Electronic and Control Subsystem)이다. 모든 모터 제어 전자장치를 중앙 제어반(Central Cabinet)에 배치하는 대신 드라이버를 각 관절 모듈(Joint Module)의 내부 또는 인접 위치에 통합할 수 있다. 이를 통해 고전류 상 배선(High-Current Phase Wiring)을 단축하고 동적으로 제어되는 로봇 다리에 적합한 소형 분산 액추에이터 아키텍처(Distributed Actuator Architecture)를 구현할 수 있다.
+
+드라이버는 일반적으로 로봇의 48V 또는 72V 직류 전력 아키텍처(DC Power Architecture)와 연결되며 BLDC 또는 PMSM 액추에이터에 필요한 상전압(Phase Voltage)을 생성한다. 핵심 전력단(Core Power Stage)은 3개의 하프 브리지(Half Bridge)에 6개의 스위칭 소자(Switching Device)를 배치한 3상 인버터(Three-Phase Inverter)이다. 인버터의 스위칭 상태와 듀티 사이클(Duty Cycle)을 제어하여 모터 전류, 전자기 토크(Electromagnetic Torque), 회전 속도(Rotational Speed), 회생 에너지 흐름(Regenerative Energy Flow)을 조절한다.
+
+전력 반도체(Power Semiconductor)의 선정은 효율(Efficiency), 열 성능(Thermal Performance), 스위칭 주파수(Switching Frequency), 패키징(Packaging)에 큰 영향을 미친다. MOSFET 기반 전력단은 낮은 도통 저항(Conduction Resistance)을 통해 높은 상전류에서 손실을 줄일 수 있기 때문에 소형 사족보행 액추에이터에서 일반적으로 고려되는 전압 수준에 특히 적합하다. 그러나 반도체의 전압 정격(Voltage Rating)은 직류 버스 변동, 회생에 따른 전압 상승, 스위칭 오버슈트(Switching Overshoot), 과도 교란(Transient Disturbance)에 대해 충분한 여유를 가져야 한다.
+
+게이트 드라이버 회로(Gate-Driver Circuitry)는 저전압 제어기(Low-Voltage Controller)와 고전류 전력 스위치(High-Current Power Switch) 사이의 인터페이스를 구성한다. 빠른 스위칭을 위해 충분한 소스 및 싱크 전류(Source and Sink Current)를 제공하면서 하이사이드(High-Side)와 로우사이드(Low-Side)가 안정적으로 동작해야 한다. 데드타임 관리(Dead-Time Management)는 하나의 하프 브리지에서 두 소자가 동시에 도통되는 것을 방지하며, 저전압 잠금(Undervoltage Lockout)과 게이트 보호(Gate Protection)는 전원 또는 제어 전압에 이상이 발생했을 때 비정상적인 스위칭을 방지한다.
+
+정확한 상전류 측정(Phase-Current Measurement)은 모터 토크가 제어되는 권선 전류(Winding Current)와 밀접하게 연관되기 때문에 기본적인 요구사항이다. 성능 및 패키징 요구조건에 따라 션트 저항(Shunt Resistor), 전류 증폭기(Current Amplifier), 홀 효과 소자(Hall-Effect Device) 또는 기타 절연 센싱 방식(Isolated Sensing Method)을 사용할 수 있다. 측정 대역폭(Measurement Bandwidth), 오프셋(Offset), 노이즈(Noise), PWM 스위칭과의 동기화, 열 드리프트(Thermal Drift)는 자속 기준 제어(FOC)의 품질과 관절 토크 추정(Joint Torque Estimation)에 직접적인 영향을 미친다.
+
+PMSM 기반 사족보행 로봇 관절에서는 모터 드라이버가 일반적으로 자속 기준 제어(FOC, Field-Oriented Control)를 수행한다. 측정된 상전류를 회전 기준 좌표계(Rotating Reference Frame)의 물리량으로 변환하여 토크 생성 전류(Torque-Producing Current)와 자속 관련 전류(Flux-Related Current)를 독립적으로 제어할 수 있다. 빠른 내부 전류 루프(Inner Current Loop)는 상위 토크, 속도, 임피던스 또는 위치 제어(Torque, Velocity, Impedance, or Position Control)의 기반을 제공하며 액추에이터가 균형 보정(Balance Correction)과 지형 상호작용(Terrain Interaction)에 빠르게 대응할 수 있도록 한다.
+
+엔코더(Encoder)에서 제공되는 회전자 위치 정보(Rotor Position Information)는 모터 제어 루프(Motor-Control Loop)와 긴밀하게 통합되어야 한다. 제어기는 측정된 회전자 각도(Rotor Angle)를 전기적 정류(Electrical Commutation), 좌표 변환(Coordinate Transformation), 속도 추정(Velocity Estimation), 폐루프 제어(Closed-Loop Regulation)에 사용한다. 엔코더 샘플링과 전류 측정 사이의 시간 오차는 고속 운전에서 제어 오차로 나타날 수 있으므로 결정론적 샘플링(Deterministic Sampling), 정확한 타임스탬프(Timestamp), 낮은 통신 지연(Low Communication Latency), 동기화된 제어 실행(Synchronized Control Execution)이 중요하다.
+
+통합 드라이버는 직류 버스 전압(DC-Bus Voltage)도 모니터링해야 한다. 사용 가능한 버스 전압은 인버터가 순간적으로 제공할 수 있는 변조 능력(Modulation Capability)을 결정하기 때문이다. 모터 속도가 높아질수록 역기전력(Back-EMF)이 증가하여 전류 제어에 사용할 수 있는 전압 여유(Voltage Margin)가 감소한다. 또한 버스 전압 측정은 저전압 검출(Undervoltage Detection), 과전압 보호(Overvoltage Protection), 회생 에너지 관리(Regenerative-Energy Management), 전력 추정(Power Estimation), 비정상 전원 거동에 대한 진단 분석(Diagnostic Analysis)을 지원한다.
+
+회생 운전(Regenerative Operation)에서는 인버터가 에너지 흐름 측면에서 본질적으로 양방향(Bidirectional)으로 동작한다. 관절 감속(Joint Deceleration), 착지(Landing), 유연한 순응 동작(Compliant Yielding), 외력에 의해 구동되는 움직임(Externally Driven Motion) 과정에서 모터는 발전기(Generator)로 동작하여 에너지를 직류 버스로 반환할 수 있다. 드라이버는 전류 제어를 불안정하게 만들지 않으면서 이러한 전환을 관리해야 하며, 상위 전력 분배 장치(PDU), 배터리(Battery), 보호 아키텍처(Protection Architecture)는 회생된 전기 에너지를 수용하거나 제한할 수 있어야 한다.
+
+파괴적인 전기적 고장(Destructive Electrical Fault)은 상위 감독 컴퓨터(Supervisory Computer)가 대응할 수 있는 시간보다 훨씬 빠르게 발생할 수 있기 때문에 보호 기능(Protection Function)은 로컬에서 동작해야 한다. 드라이버는 과도한 상전류(Excessive Phase Current), 단락(Short Circuit), 직류 버스 과전압 또는 저전압(DC-Bus Overvoltage or Undervoltage), 전력단 과열(Power-Stage Overheating), 게이트 드라이버 고장(Gate-Driver Fault), 비정상 센서 상태(Invalid Sensor Condition) 등을 검출해야 한다. 가장 빠른 고장에는 하드웨어 보호 경로(Hardware Protection Path)가 필요할 수 있으며, 펌웨어 감시(Firmware Supervision)는 추가적인 진단 및 복구 로직(Diagnostic and Recovery Logic)을 제공한다.
+
+열 설계(Thermal Design)는 통합 액추에이터가 실제로 제공할 수 있는 연속 토크(Continuous Torque)를 결정한다. 반도체 도통 손실(Semiconductor Conduction Loss), 스위칭 손실(Switching Loss), 게이트 드라이버 손실(Gate-Driver Loss), 전류 센싱 손실(Current-Sensing Loss), 인접한 모터에서 전달되는 열이 모두 열 부하(Thermal Load)에 기여한다. 따라서 전력 소자(Power Device)는 PCB, 히트 스프레더(Heat Spreader), 관절 하우징(Joint Housing), 구조 프레임(Structural Frame)을 통과하는 의도적으로 설계된 열전달 경로(Heat-Transfer Path)에 연결하여 로봇 구조체 자체를 열 관리 시스템의 일부로 활용할 수 있어야 한다.
+
+통합 설계(Integration)는 배선을 줄이지만 까다로운 패키징 제약조건(Packaging Constraint)을 발생시킨다. 인버터를 모터 가까이에 배치하면 긴 고전류 상 도체(High-Current Phase Conductor)를 최소화하고 하네스 질량(Harness Mass)을 줄이며 모듈성(Modularity)을 향상시킬 수 있다. 동시에 전자장치는 관절 진동(Joint Vibration), 충격(Shock), 모터 열(Motor Heat), 전자기 간섭(Electromagnetic Interference), 제한된 냉각 공간(Limited Cooling Volume)에 노출된다. 따라서 PCB 레이아웃(PCB Layout), 기계적 장착(Mechanical Mounting), 밀봉(Sealing), 커넥터 배치(Connector Placement), 부품 고정(Component Retention)은 관절의 실제 동작 환경을 고려하여 설계해야 한다.
+
+빠르게 스위칭하는 인버터는 엔코더, 토크 센서(Torque Sensor), 통신 트랜시버(Communication Transceiver), 기타 저레벨 신호(Low-Level Signal) 가까이에서 높은 전압 변화율(dv/dt)과 전류 변화율(di/dt)의 교란을 발생시키므로 전자기 적합성(EMC, Electromagnetic Compatibility)이 특히 중요하다. 소형화된 전류 루프(Compact Current Loop), 제어된 귀환 경로(Controlled Return Path), 적절한 디커플링(Decoupling), 필터링(Filtering), 접지(Grounding), 전력 및 신호 영역 사이의 물리적 분리(Physical Separation)는 전도 및 방사 간섭(Conducted and Radiated Interference)을 제한하는 데 도움을 준다. 케이블 차폐(Cable Shielding)와 커넥터 설계도 PCB 수준의 EMC 전략을 보완해야 한다.
+
+로컬 컴퓨팅(Local Computing)을 적용하면 모든 전류 루프 연산(Current-Loop Operation)을 중앙 컴퓨터를 통해 처리하지 않고 관절 모듈 내부에서 고속 제어(High-Rate Control)를 수행할 수 있다. 마이크로컨트롤러(Microcontroller) 또는 실시간 프로세서(Real-Time Processor)는 PWM 생성, 전류 획득(Current Acquisition), FOC, 엔코더 처리(Encoder Processing), 열 상태 감시(Thermal Supervision), 보호, 진단을 수행할 수 있다. 상위 제어기(Higher-Level Controller)는 토크, 속도, 위치 또는 동작 모드 명령을 전송하고 액추에이터 네트워크(Actuator Network)를 통해 측정 상태와 건전성 정보(Health Information)를 수신할 수 있다.
+
+통신 인터페이스(Communication Interface)는 로봇 제어 아키텍처와의 결정론적 정보 교환(Deterministic Exchange)을 지원해야 한다. 사족보행 로봇 구조에서는 액추에이터 수준 통신 기술(Actuator-Level Communication Technology)로 CAN FD와 EtherCAT을 사용하며, 상위 네트워크 계층(Higher Networking Layer)은 별도로 구성된다. 통합 드라이버는 명령값(Command Value), 관절 상태(Joint State), 측정 전류(Measured Current), 온도, 버스 전압, 고장 플래그(Fault Flag), 진단 카운터(Diagnostic Counter), 타임스탬프를 제공하면서 네트워크 교란(Network Disturbance)이 로컬 전기 보호 기능에 영향을 주지 않도록 해야 한다.
+
+강건한 드라이버 아키텍처(Robust Driver Architecture)는 정상 운전(Normal Operation), 출력 제한 운전(Derated Operation), 복구 가능한 고장(Recoverable Fault), 심각한 셧다운 조건(Critical Shutdown Condition)을 구분해야 한다. 예를 들어 온도가 상승하면 완전한 셧다운 전에 허용 토크(Allowable Torque)를 우선 감소시킬 수 있으며, 엔코더 타당성 오류(Encoder Plausibility Error)가 발생하면 능동 토크 생성(Active Torque Generation)을 즉시 금지해야 할 수 있다. 이러한 상태 관리(State Management)를 통해 상위 감독 제어기(Supervisory Controller)는 액추에이터의 잔여 성능(Remaining Capability)을 파악하고 적절한 로봇 수준 대응(Robot-Level Response)을 조정할 수 있다.
+
+진단(Diagnostics)은 단순히 일반적인 모터 고장(Generic Motor Fault)을 보고하는 데 그치지 않고 비정상 이벤트(Abnormal Event)를 재구성할 수 있을 만큼 충분한 정보를 보존해야 한다. 최대 전류(Peak Current), 최소 및 최대 버스 전압, 반도체 온도(Semiconductor Temperature), 모터 온도(Motor Temperature), 엔코더 상태(Encoder Status), 통신 오류(Communication Error), 보호 기능 작동(Protection Trigger), 동작 모드(Operating Mode), 고장 타임스탬프(Fault Timestamp)는 중요한 진단 근거를 제공할 수 있다. 이러한 로컬 정보는 이후 시스템 상태 모니터링(System-Health Monitoring), 이벤트 로깅(Event Logging), 원격 진단(Remote Diagnostics), 예지 정비(Predictive Maintenance) 아키텍처를 지원한다.
+
+인터페이스가 표준화되어 있다면 정비성(Serviceability)과 모듈성(Modularity)은 통합 설계의 중요한 장점이 된다. 모터, 드라이버, 센싱(Sensing), 통신 전자장치(Communication Electronics)를 포함하는 관절 모듈은 정의된 전력 및 네트워크 연결(Power and Network Connection)을 갖는 교체 가능한 기능 단위(Replaceable Functional Unit)가 될 수 있다. 펌웨어 식별 정보(Firmware Identification), 하드웨어 리비전 정보(Hardware Revision Information), 캘리브레이션 파라미터(Calibration Parameter), 진단 이력(Diagnostic History)을 모듈과 연계하여 유지하면 제조 구성 관리(Manufacturing Configuration), 현장 교체(Field Replacement), 유지보수를 단순화할 수 있다.
+
+따라서 통합 모터 드라이버(Integrated Motor Driver)는 로봇 전력 시스템(Robot Power System)과 기계적 관절 운동(Mechanical Joint Motion) 사이에서 전기적 지능 계층(Electrical Intelligence Layer)의 역할을 수행한다. 액추에이터 경계(Actuator Boundary) 내부에서 3상 전력 변환(Three-Phase Power Conversion), 전류 제어(Current Regulation), 회전자 위치 처리(Rotor-Position Processing), 열 관리, 보호, 통신, 진단을 통합한다. 이러한 설계는 구현 가능한 토크 대역폭(Torque Bandwidth), 효율, 강건성(Robustness), 고장 대응(Fault Response)을 직접 결정하며, 이후 다루는 엔코더(Encoder), 토크 센서, 관절 진단(Joint Diagnostics)을 위한 인터페이스 기반을 제공한다.
+
+## 04.04. Encoder Interface
+
+![](images/image4.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+엔코더 인터페이스(Encoder Interface)는 사족보행 로봇 관절(Quadruped Joint)을 개방 루프 전기기계식 액추에이터(Open-Loop Electromechanical Actuator)에서 정밀하게 제어되는 서보 시스템(Servo System)으로 전환하는 데 필요한 위치 및 운동 피드백(Position and Motion Feedback)을 제공한다. 엔코더(Encoder)는 모터 축(Motor Shaft) 또는 관절 출력부(Joint Output)의 회전을 측정하고 이 정보를 통합 모터 드라이버(Integrated Motor Driver)와 실시간 제어기(Real-Time Controller)에 전달한다. 정확한 위치 피드백(Position Feedback)은 정류(Commutation), 토크 제어(Torque Control), 속도 추정(Velocity Estimation), 자세 제어(Posture Regulation), 협조된 다리 운동(Coordinated Leg Motion)에 필수적이다.
+
+사족보행 로봇 관절은 빠른 가속(Rapid Acceleration), 빈번한 방향 전환(Frequent Reversal), 저속 힘 제어(Low-Speed Force Control), 반복적인 충격 하중(Impact Loading)이 결합된 운동을 수행하기 때문에 엔코더 성능에 높은 요구조건을 부여한다. 센싱 시스템(Sensing System)은 과도한 지연시간(Latency)이나 노이즈(Noise)를 발생시키지 않으면서 전체 동작 범위에서 정확한 각도 정보(Angular Information)를 유지해야 한다. 따라서 해상도(Resolution)만으로는 충분하지 않으며 정확도(Accuracy), 반복성(Repeatability), 대역폭(Bandwidth), 업데이트 속도(Update Rate), 기계적 정렬(Mechanical Alignment), 환경 강건성(Environmental Robustness)을 함께 고려해야 한다.
+
+모터 측 엔코더(Motor-Side Encoder)는 일반적으로 회전자(Rotor) 가까이에 통합되며 BLDC 또는 PMSM의 정류에 필요한 전기적 각도(Electrical Angle)를 제공한다. 자속 기준 제어(FOC, Field-Oriented Control)를 사용하는 PMSM에서는 회전자 위치(Rotor Position)가 정지 좌표계의 상 물리량(Stationary Phase Quantities)과 회전 기준 좌표계(Rotating Reference Frame) 사이의 변환을 결정한다. 각도 오차(Angular Error)는 회전자 자기장(Rotor Magnetic Field)에 대한 명령 전류의 방향에 직접 영향을 미치므로 토크 정확도(Torque Accuracy), 효율(Efficiency), 제어 안정성(Control Stability)을 저하시킬 수 있다.
+
+엔코더 인터페이스는 액추에이터 요구조건에 따라 절대 위치 센싱(Absolute Position Sensing) 또는 증분 위치 센싱(Incremental Position Sensing)을 사용할 수 있다. 증분형 엔코더(Incremental Encoder)는 펄스(Pulse) 또는 디지털 위치 변화(Digital Position Change)를 통해 상대적인 움직임을 제공하며 일반적으로 절대 기계 위치(Absolute Mechanical Position)를 설정하기 위한 기준 설정 절차(Reference Procedure)가 필요하다. 절대형 엔코더(Absolute Encoder)는 전원이 인가된 직후 회전자 또는 관절 각도를 직접 식별할 수 있어 초기화 요구사항을 줄이고 시스템 기동 직후 제어기가 액추에이터의 구성을 파악할 수 있도록 한다.
+
+자기식 엔코더(Magnetic Encoder)는 작은 기계적 공간(Mechanical Envelope) 내에서 비접촉식 각도 측정(Contactless Angular Measurement)을 제공할 수 있기 때문에 소형 통합 관절(Compact Integrated Joint)에 적합하다. 광학식 엔코더(Optical Encoder)는 우수한 해상도와 정확도를 제공할 수 있지만 패키징(Packaging), 오염(Contamination), 정렬(Alignment), 환경 조건 측면에서 다른 제약이 발생할 수 있다. 리졸버 기반 센싱(Resolver-Based Sensing)은 가혹한 환경에서 높은 강건성을 제공하지만 인터페이스 전자장치와 패키징이 더 복잡해질 수 있다. 따라서 센서 선정은 해상도만이 아니라 전체 관절 환경을 반영해야 한다.
+
+사족보행 로봇 액추에이터는 모터 측 위치 센싱(Motor-Side Position Sensing)과 출력 측 위치 센싱(Output-Side Position Sensing)을 모두 사용할 수 있다. 모터 측 엔코더는 고대역폭 정류(High-Bandwidth Commutation)와 모터 제어를 지원하고, 출력 측 엔코더는 기어박스(Gearbox)를 통과한 이후의 실제 관절 각도(Actual Joint Angle)를 측정한다. 두 측정값을 비교하면 변속기 컴플라이언스(Transmission Compliance), 백래시(Backlash), 변형(Deformation), 예상하지 못한 기계적 변위(Mechanical Displacement), 변속기 건전성 상실(Loss of Transmission Integrity)을 식별할 수 있으며 관절 진단(Joint Diagnostics)과 안전 감시(Safety Supervision)를 위한 추가 정보를 제공할 수 있다.
+
+모터 측 위치를 관절 위치로 변환할 때는 변속비(Transmission Ratio)를 정확하게 반영해야 한다. 고해상도 모터 엔코더와 기어박스를 결합하면 이론적으로 매우 정밀한 관절 각도 해상도(Joint-Angle Resolution)를 얻을 수 있지만, 변속기 백래시, 탄성(Elasticity), 제조 공차(Manufacturing Tolerance), 구조 변형(Structural Deformation)으로 인해 동일한 수준의 실제 물리적 정확도를 달성하지 못할 수 있다. 따라서 하중이 작용하는 상황에서 실제 기계적 관절 구성(Mechanical Joint Configuration)을 정확히 파악해야 하는 경우 출력 측 센싱이 중요해질 수 있다.
+
+엔코더 해상도는 표현할 수 있는 가장 작은 디지털 각도 증분(Digital Angular Increment)을 결정하지만 실제 제어 성능은 측정 정확도와 노이즈에도 영향을 받는다. 매우 높은 공칭 해상도(Nominal Resolution)가 동일하게 높은 절대 정확도(Absolute Accuracy)를 보장하는 것은 아니다. 양자화(Quantization), 비선형성(Nonlinearity), 편심(Eccentricity), 자기 왜곡(Magnetic Distortion), 보간 오차(Interpolation Error), 장착 공차(Mounting Tolerance), 온도 영향(Temperature Effect)은 모두 위치 오차에 영향을 줄 수 있으므로 액추에이터 전체 동작 범위에서 특성을 평가해야 한다.
+
+속도(Velocity)는 엔코더 위치로부터 계산되는 경우가 많기 때문에 샘플링 특성(Sampling Behavior)이 특히 중요하다. 위치 측정값을 미분하면 특히 저속에서 양자화 및 전기적 노이즈가 증폭될 수 있다. 따라서 모터 드라이버는 고속 샘플링(High-Rate Sampling), 필터링(Filtering), 보간(Interpolation), 관측기 기법(Observer Technique), 시간 기반 에지 측정(Time-Based Edge Measurement) 등을 조합하여 제어 루프에 과도한 위상 지연(Phase Delay)을 발생시키지 않으면서 안정적인 속도 추정값(Velocity Estimate)을 생성할 수 있다.
+
+물리적인 움직임이 발생한 시점부터 엔코더 측정값을 사용할 수 있게 되는 시점까지의 지연시간은 달성 가능한 제어 대역폭에 직접적인 영향을 미친다. 센서 변환 시간(Sensor Conversion Time), 디지털 인터페이스 전송(Digital Interface Transfer), 제어기 데이터 획득(Controller Acquisition), 필터링, 소프트웨어 스케줄링(Software Scheduling)이 전체 피드백 지연(Feedback Delay)을 구성한다. 고도로 동적인 사족보행 관절에서는 높은 공칭 업데이트 속도를 제공하면서 예측할 수 없는 시간 변동을 갖는 인터페이스보다 결정론적이고 제한된 지연시간(Deterministic and Bounded Latency)을 갖는 인터페이스가 더 적합하다.
+
+엔코더 샘플링(Encoder Sampling)은 통합 모터 드라이버 내부의 전류 측정(Current Measurement) 및 PWM 실행과 협조되어야 한다. 자속 기준 제어는 회전자 각도, 상전류(Phase Current), 명령된 인버터 전압(Commanded Inverter Voltage) 사이의 일관된 관계에 의존한다. 이들 물리량이 서로 크게 다른 시점의 상태를 나타내면 발생하는 위상 오차(Phase Error)가 토크 생성을 저하시킬 수 있다. 따라서 전기적 회전 속도(Electrical Speed)와 제어 대역폭이 증가할수록 동기화된 데이터 획득(Synchronized Acquisition)이 더욱 중요해진다.
+
+전기적 인터페이스(Electrical Interface)는 선정된 센싱 기술에 따라 차동 신호(Differential Signaling), 직렬 디지털 프로토콜(Serial Digital Protocol) 또는 기타 엔코더 전용 연결 방식을 사용할 수 있다. 인터페이스 선정에서는 데이터 전송률(Data Rate), 케이블 길이(Cable Length), 전자기 내성(Electromagnetic Immunity), 커넥터 크기(Connector Size), 프로세서 호환성(Processor Compatibility), 진단 기능(Diagnostic Capability)을 고려해야 한다. 통합 관절 모듈에서는 짧은 전기적 경로가 유리하지만 인터페이스는 여전히 빠르게 스위칭하는 인버터 노드와 높은 모터 상전류 가까이에서 동작한다.
+
+따라서 전자기 적합성(EMC, Electromagnetic Compatibility)은 엔코더 인터페이스 설계의 핵심 고려사항이다. 3상 인버터에서 발생하는 높은 전압 변화율(dv/dt)과 전류 변화율(di/dt)은 엔코더 전원, 접지(Ground), 클록(Clock), 데이터 라인(Data Line)에 노이즈를 결합시킬 수 있다. 제어된 귀환 경로(Controlled Return Path), 필요한 경우 차동 신호, 필터링, 차폐(Shielding), 전력 스위칭 루프와의 물리적 분리, 신중한 커넥터 핀 배치(Connector Pin Assignment)는 전기적으로 노이즈가 많은 소형 액추에이터 환경에서 위치 정보의 무결성(Position Integrity)을 유지하는 데 도움을 준다.
+
+엔코더 전원의 무결성(Power Integrity)도 중요하다. 로컬 전원에 발생하는 교란은 측정 오류(Measurement Error), 통신 리셋(Communication Reset), 일시적인 위치 정보 상실(Loss of Position Information)로 나타날 수 있기 때문이다. 적절한 전압 조정(Voltage Regulation), 로컬 디커플링(Local Decoupling), 필터링, 접지, 과도현상 보호(Transient Protection)를 통해 센싱 전자장치를 모터 스위칭 교란으로부터 격리해야 한다. 유효한 위치 정보의 상실이 위험한 토크 명령을 발생시킬 가능성이 있다면 엔코더 전원 상태 역시 모니터링해야 한다.
+
+센싱 소자 자체가 우수한 사양을 갖더라도 기계적 설치(Mechanical Installation)가 엔코더 정확도를 지배할 수 있다. 축 편심(Shaft Eccentricity), 축 방향 변위(Axial Displacement), 자석 오프셋(Magnet Offset), 센서 기울기(Sensor Tilt), 베어링 움직임(Bearing Movement), 조립 공차(Assembly Tolerance)는 주기적 또는 체계적인 각도 오차(Systematic Angular Error)를 발생시킬 수 있다. 따라서 기계적 기준면(Mechanical Datum) 정의와 제조 정렬 절차(Manufacturing Alignment Procedure)를 전기적 인터페이스와 함께 수립해야 하며, 반복적으로 나타나는 설치 관련 오차는 캘리브레이션(Calibration)을 통해 보상할 수 있다.
+
+기동 동작(Startup Behavior)은 모터 제어기가 제어된 토크를 인가하기 전에 충분히 정확한 회전자 위치를 알아야 하므로 특별히 고려해야 한다. 절대형 엔코더는 이 정보를 즉시 제공할 수 있지만 일부 증분형 구성에서는 정렬(Alignment) 또는 원점 복귀(Homing)가 필요하다. 기동 시퀀스(Startup Sequence)는 엔코더 유효성(Encoder Validity), 전원 상태(Supply Status), 통신 무결성(Communication Integrity), 캘리브레이션 데이터, 모터 제어 상태가 확립되고 정상적인 토크 생성이 허용될 때까지 비제어 움직임(Uncontrolled Motion)이 발생하지 않도록 해야 한다.
+
+엔코더 진단(Encoder Diagnostics)은 단순한 통신 두절만을 검출해서는 안 된다. 타당성 모니터링(Plausibility Monitoring)을 통해 불가능한 위치 점프(Position Jump), 과도한 속도(Excessive Velocity), 오래된 데이터(Stale Data), 유효하지 않은 프레임(Invalid Frame), 신호 품질 저하(Signal-Quality Degradation), 모터 측과 출력 측 측정값의 불일치, 다른 액추에이터 정보와의 불일치를 식별할 수 있다. 손상된 위치 피드백은 모터와 인버터가 전기적으로 정상인 상태에서도 잘못된 정류와 의도하지 않은 토크(Unintended Torque)를 발생시킬 수 있으므로 진단 커버리지(Diagnostic Coverage)가 특히 중요하다.
+
+고장 대응(Fault Response)은 검출된 엔코더 문제의 중요도와 지속시간에 따라 결정되어야 한다. 일시적인 통신 교란(Transient Communication Disturbance)은 제어된 복구(Controlled Recovery)를 허용할 수 있지만, PMSM이 능동적으로 토크를 제어하는 동안 신뢰할 수 있는 회전자 각도(Trustworthy Rotor Angle)를 상실하면 즉각적인 토크 차단(Torque Inhibition)이 필요할 수 있다. 로컬 모터 드라이버는 고장 상태를 상위 감독 제어기(Supervisory Controller)에 보고하여 로봇 수준 로직이 하중 감소, 보행 상태 전환(Locomotion Transition), 나머지 다리의 안정화(Stabilization), 또는 안전 상태(Safe Condition) 진입을 수행할 수 있도록 해야 한다.
+
+온도와 환경 하중(Environmental Loading)은 로봇의 수명 동안 엔코더 동작 특성을 변화시킬 수 있다. 관절에 장착된 센서는 모터 열(Motor Heat), 인버터 열(Inverter Heat), 진동, 충격, 먼지, 수분, 반복적인 기계적 사이클(Mechanical Cycling)에 노출된다. 따라서 센서 기술(Sensor Technology), PCB 장착(PCB Attachment), 자석 또는 코드 휠(Code Wheel), 커넥터, 밀봉(Sealing), 케이블 인터페이스(Cable Interface)는 정적인 실험실 측정 조건뿐만 아니라 실제 이동(Actual Locomotion)을 대표하는 조건에서 검증되어야 한다.
+
+궁극적으로 엔코더 인터페이스(Encoder Interface)는 기계적 관절 상태(Mechanical Joint State)를 전기적 제어 지능(Electrical Control Intelligence)에 연결한다. 엔코더의 성능은 분산 액추에이터 아키텍처(Distributed Actuator Architecture)에서 정류, 위치 제어(Position Regulation), 속도 추정, 토크 생성(Torque Generation), 동기화(Synchronization), 진단의 품질을 결정한다. 앞에서 설명한 통합 모터 드라이버와 결합하여 물리적 움직임(Physical Motion)에서 로컬 실시간 제어(Local Real-Time Control)로 이어지는 신뢰성 높은 피드백 경로(Feedback Path)를 형성하며, 상위 사족보행 로봇 이동 알고리즘(Quadruped Locomotion Algorithm)에 필요한 위치 정보를 제공한다.
+
+## 04.05. Torque Sensor Interface
+
+![](images/image5.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+토크 센서 인터페이스(Torque Sensor Interface)는 사족보행 로봇 관절(Quadruped Joint)을 통해 작용하는 기계적 하중(Mechanical Load)에 대한 직접적인 정보를 제공하며, 엔코더(Encoder)가 제공하는 위치 피드백(Position Feedback)을 보완한다. 모터 전류(Motor Current)를 이용하여 전자기 토크(Electromagnetic Torque)를 추정할 수 있지만, 전용 토크 센서(Torque Sensor)는 실제 하중 경로(Load Path)에 더 가까운 위치에서 기계적 반응을 측정한다. 이러한 정보는 힘 제어(Force Control), 유연한 이동(Compliant Locomotion), 지형 상호작용(Terrain Interaction), 관절 상태 모니터링(Joint Health Monitoring)에 특히 중요하다.
+
+사족보행 로봇의 이동(Quadruped Locomotion)에서는 발(Foot)과 환경(Environment) 사이의 접촉력(Contact Force)을 지속적으로 관리해야 한다. 정지 자세(Standing), 보행(Walking), 달리기(Running), 착지(Landing), 계단 이동(Stair Negotiation), 교란 복구(Disturbance Recovery) 과정에서 로봇이 체중을 재분배하고 균형을 유지함에 따라 관절 토크(Joint Torque)가 빠르게 변화한다. 따라서 토크 센싱 아키텍처(Torque Sensing Architecture)는 비교적 일정한 지지 하중(Support Load)과 짧은 동적 이벤트(Dynamic Event)를 과도한 지연, 포화(Saturation), 측정 노이즈(Measurement Noise) 없이 모두 포착할 수 있어야 한다.
+
+직접 토크 센싱(Direct Torque Sensing)은 일반적으로 관절의 하중 경로에 배치된 구조 요소(Structural Element)의 미세한 탄성 변형(Elastic Deformation)을 측정하여 구현한다. 스트레인 게이지(Strain Gauge) 또는 기타 힘 감응 기술(Force-Sensitive Technology)은 이러한 변형을 인가된 토크에 비례하는 전기 신호(Electrical Signal)로 변환한다. 기계적 센싱 요소(Mechanical Sensing Element)는 충분한 감도(Sensitivity)를 제공하면서 관절 대역폭(Joint Bandwidth)을 유지하고 최대 하중(Peak Load)을 견디며 반복적인 충격 및 피로 사이클(Fatigue Cycle)을 견딜 수 있을 만큼 충분한 강성과 강도를 가져야 한다.
+
+센서의 배치(Sensor Placement)는 측정값이 나타내는 물리적 의미에 큰 영향을 미친다. 관절 출력부(Joint Output)에 배치된 토크 센서는 기어박스(Gearbox)를 통과한 이후의 기계적 토크를 측정하므로 변속기 마찰(Transmission Friction), 컴플라이언스(Compliance), 효율(Efficiency), 외부 하중(External Loading)의 영향을 포함한다. 반면 모터 전류 기반 추정(Motor-Current-Based Estimation)은 이러한 기계적 영향이 발생하기 전의 전자기 토크를 나타낸다. 두 물리량을 비교하면 전체 액추에이터의 동작과 상태에 대한 추가적인 정보를 얻을 수 있다.
+
+토크 센서 신호(Torque Sensor Signal)는 일반적으로 모터 제어기(Motor Controller)에서 사용하기 전에 전용 신호 조절(Signal Conditioning)이 필요하다. 작은 센서 출력은 저노이즈 증폭(Low-Noise Amplification), 필터링(Filtering), 오프셋 보상(Offset Compensation), 아날로그-디지털 변환(Analog-to-Digital Conversion)을 필요로 할 수 있다. 인터페이스는 측정값의 유용한 동적 성분(Dynamic Content)을 유지하면서 인접한 모터, 인버터(Inverter), 직류 버스(DC Bus), 통신 전자장치(Communication Electronics)에서 발생하는 스위칭 간섭(Switching Interference)과 기타 교란을 억제해야 한다.
+
+측정 범위(Measurement Range)는 정상적인 연속 하중(Continuous Load)과 단시간 최대 토크(Peak Torque)를 모두 수용해야 한다. 매우 높은 최대 토크에만 최적화된 센서는 낮은 힘의 상호작용(Low-Force Interaction)에서 충분한 감도를 제공하지 못할 수 있으며, 반대로 매우 민감한 센서는 착지나 충격 상황에서 포화될 수 있다. 따라서 기계적 및 전기적 측정 범위는 예상되는 관절 하중 분포(Joint Load Distribution), 과부하 조건(Overload Condition), 요구 제어 해상도(Control Resolution), 안전 여유(Safety Margin)를 반영하여 선정해야 한다.
+
+측정된 토크가 폐루프 힘 제어(Closed-Loop Force Control) 또는 임피던스 제어기(Impedance Controller)에 직접 사용될 수 있으므로 대역폭(Bandwidth) 역시 중요하다. 과도한 필터링은 깨끗한 신호를 제공할 수 있지만 위상 지연(Phase Delay)을 발생시켜 제어 성능이나 안정성을 저하시킬 수 있다. 반대로 필터링이 부족하면 전기적 노이즈와 구조 진동(Structural Vibration)이 제어 루프(Control Loop)에 유입될 수 있다. 따라서 센서 기구, 신호 조절, 샘플링 속도(Sampling Rate), 필터링, 제어기 대역폭을 하나의 통합된 시스템으로 설계해야 한다.
+
+통합 모터 드라이버(Integrated Motor Driver)는 토크 피드백(Torque Feedback)을 엔코더 위치, 모터 속도(Motor Velocity), 상전류 측정값(Phase-Current Measurement)과 결합할 수 있다. 고속 로컬 처리(High-Rate Local Processing)를 통해 액추에이터는 명령 토크(Commanded Torque), 추정 전자기 토크(Estimated Electromagnetic Torque), 측정 기계 토크(Measured Mechanical Torque)를 비교할 수 있다. 이러한 관계는 모든 원시 측정값(Raw Measurement)을 중앙에서 처리하지 않고도 토크 제어, 임피던스 제어, 충돌 대응(Collision Response), 접촉 감지(Contact Detection), 마찰 분석(Friction Analysis), 비정상 기계 동작 식별을 지원한다.
+
+힘 제어와 임피던스 제어(Impedance Control)는 강체 위치 제어(Rigid Position Control)만으로는 예측하기 어려운 지형 접촉을 충분히 처리할 수 없기 때문에 다족보행 로봇(Legged Robot)에서 특히 중요하다. 토크 피드백을 이용하면 관절이 변위(Displacement), 속도(Velocity), 힘(Force) 사이에서 프로그래밍 가능한 관계를 갖도록 동작시킬 수 있다. 따라서 상위 이동 제어기(Supervisory Locomotion Controller)는 지면 접촉 중에는 유연한 동작을, 지지 단계(Stance)에서는 더 강한 지지를, 복구 과정에서는 빠른 토크 변화를 명령할 수 있으며 로컬 액추에이터가 요구된 응답을 유지한다.
+
+직접 토크 센서가 설치되어 있는 경우에도 모터 전류 기반 토크 추정은 여전히 유용하다. 전류 센싱(Current Sensing)은 통합 모터 드라이버에 이미 필요하며 전자기 토크에 대한 고대역폭 정보(High-Bandwidth Information)를 제공한다. 그러나 추정 정확도는 모터 토크 상수(Motor Torque Constant), 온도, 자기 특성(Magnetic Characteristics), 인버터 동작(Inverter Behavior), 기어박스 마찰, 변속기 효율(Transmission Efficiency)에 영향을 받는다. 직접 토크 측정은 독립적인 기계적 관측(Mechanical Observation)을 제공하여 캘리브레이션(Calibration)과 타당성 검사(Plausibility Checking)를 향상시킬 수 있다.
+
+캘리브레이션은 원시 센서 출력(Raw Sensor Output)과 실제 관절 토크 사이의 관계를 설정한다. 영점 오프셋(Zero Offset), 감도, 선형성(Linearity), 히스테리시스(Hysteresis), 온도 의존성(Temperature Dependence), 기계적 예압(Mechanical Preload)은 이러한 변환에 영향을 미칠 수 있다. 캘리브레이션은 제조 과정에서 수행하고 운전 중 제어된 영점 조정(Zeroing) 또는 보상(Compensation)을 추가할 수 있다. 관절 모듈의 교체나 정비로 인해 토크 측정이 의도하지 않게 무효화되지 않도록 캘리브레이션 계수(Calibration Coefficient)를 개별 관절 모듈과 연계하여 관리해야 한다.
+
+센싱 요소와 신호 조절 전자장치는 모터와 인버터에 의해 관절 구조의 온도가 상승함에 따라 드리프트(Drift)가 발생할 수 있으므로 온도 보상(Temperature Compensation)이 중요하다. 상온에서 정확한 센서도 지속적인 이동 과정에서는 상당한 오프셋 또는 이득 오차(Gain Error)가 발생할 수 있다. 센싱 구조 주변의 온도 측정값을 이용하여 보상 모델(Compensation Model)을 적용할 수 있으며, 기계 및 전자 설계에서는 토크 측정을 왜곡하는 열 구배(Thermal Gradient)를 최소화해야 한다.
+
+기계적 교차 감도(Mechanical Cross-Sensitivity)도 고려해야 한다. 관절 구조에는 의도된 비틀림 하중(Torsional Load)뿐만 아니라 축 방향 힘(Axial Force), 반경 방향 힘(Radial Force), 굽힘 모멘트(Bending Moment), 진동, 충격이 작용할 수 있다. 센싱 요소가 적절하게 설계되고 캘리브레이션되지 않으면 이러한 하중 성분이 센서 출력에 영향을 줄 수 있다. 따라서 구조 형상(Structural Geometry)과 게이지 배치(Gauge Placement)는 원하는 토크에 대한 감도를 최대화하면서 관련 없는 하중 성분에 대한 반응을 최소화하도록 설계해야 한다.
+
+토크 센싱은 고전류 인버터 가까이에 상대적으로 작은 전기 신호를 배치하는 경우가 많기 때문에 전자기 적합성(EMC, Electromagnetic Compatibility)이 중요한 과제가 된다. PWM 스위칭, 모터 상전류, 접지 교란(Ground Disturbance), 공통 모드 전압(Common-Mode Voltage)은 측정값을 손상시킬 수 있다. 차동 센싱(Differential Sensing), 제어된 접지(Controlled Grounding), 차폐(Shielding), 필터링, 적절한 케이블 라우팅(Cable Routing), 신중한 PCB 레이아웃(PCB Layout), 전력 경로와 측정 경로의 분리는 소형 관절 모듈 내부에서 신호 무결성(Signal Integrity)을 유지하는 데 도움을 준다.
+
+샘플링(Sampling)과 타이밍(Timing)은 다른 액추에이터 피드백 채널(Feedback Channel)과 협조되어야 한다. 토크, 엔코더 위치, 속도, 모터 전류는 동일한 물리적 관절 상태의 서로 다른 측면을 나타내므로 충분히 일관된 시점의 상태를 표현해야 한다. 정확한 타임스탬프(Timestamp)와 결정론적 데이터 획득(Deterministic Acquisition)을 적용하면 특히 충격, 빠른 토크 반전(Torque Reversal), 고대역폭 임피던스 제어(High-Bandwidth Impedance Control) 과정에서 제어기가 동적 이벤트를 정확하게 해석할 수 있다.
+
+토크 정보는 접촉 및 교란 감지(Contact and Disturbance Detection)에도 기여한다. 측정된 하중의 예상하지 못한 변화는 발 접촉(Foot Contact), 충돌(Collision), 외부 밀림(External Pushing), 기계적 장애(Mechanical Obstruction), 지형 지지 상태(Terrain Support)의 변화를 나타낼 수 있다. 상위 제어 시스템은 관절 토크를 관성측정장치(IMU), 발 힘 센서(Foot-Force Sensor), 위치 및 운동 정보와 결합하여 물리적 상호작용 상태(Physical Interaction State)를 추정하고 인지 센서(Perception Sensor)에만 의존하지 않고 이동 동작을 적응시킬 수 있다.
+
+진단 모니터링(Diagnostic Monitoring)은 명령 토크, 전류 기반 추정 토크(Current-Derived Torque), 직접 측정 토크를 비교할 수 있다. 지속적인 불일치(Persistent Disagreement)는 센서 드리프트(Sensor Drift), 엔코더 문제(Encoder Problem), 모터 성능 저하(Motor Degradation), 기어박스 마찰, 기계적 손상(Mechanical Damage), 느슨해진 부품(Loose Component), 예상하지 못한 외부 하중을 나타낼 수 있다. 따라서 추세 정보(Trend Information)는 관절 모듈 진단(Joint-Module Diagnostics)을 지원하고 궁극적으로 사족보행 로봇 아키텍처의 시스템 상태 모니터링(System Health Monitoring)과 예지 정비(Predictive Maintenance)에 기여할 수 있다.
+
+토크 센서 고장(Torque-Sensor Fault)은 제어 안전(Control Safety)에 미치는 영향에 따라 처리해야 한다. 단선(Open Circuit), 단락(Short Circuit), 포화, 과도한 오프셋(Excessive Offset), 비정상적인 값의 급변(Implausible Jump), 오래된 측정값(Stale Measurement), 통신 손실(Loss of Communication)은 가능한 경우 로컬에서 검출해야 한다. 활성 제어 모드(Active Control Mode)에서 토크 피드백이 필수적인 경우 신뢰할 수 없는 측정값으로 운전을 계속하기보다는 토크 제한(Torque Limitation)이나 보다 안전한 모드(Safer Mode)로의 전환이 필요할 수 있다.
+
+관절 내부의 중복 정보(Redundant Information)는 센서가 물리적으로 이중화되지 않은 경우에도 내고장성 감시(Fault-Tolerant Supervision)를 구현할 수 있는 기회를 제공한다. 모터 전류, 모터 측 엔코더 데이터(Motor-Side Encoder Data), 출력 위치(Output Position), 명령 운동(Commanded Motion), 측정 토크를 단순화된 물리적 관계(Physical Relationship)에 따라 상호 비교할 수 있다. 이러한 분석적 중복성(Analytical Redundancy)이 모든 전용 안전 메커니즘(Dedicated Safety Mechanism)을 대체할 수는 없지만 고장 검출 성능을 향상시키고 전기적 센싱 문제와 실제 기계적 교란을 구분하는 데 도움을 준다.
+
+궁극적으로 토크 센서 인터페이스(Torque Sensor Interface)는 독립적인 측정 채널(Isolated Measurement Channel)이 아니라 전체 전기기계식 액추에이터(Complete Electromechanical Actuator)의 일부로 다루어야 한다. 기계적 센싱 요소, 아날로그 또는 디지털 인터페이스(Analog or Digital Interface), 캘리브레이션, 동기화(Synchronization), EMC 보호, 진단, 제어 통합(Control Integration)은 로봇이 각 관절에서 발생하는 물리적 상호작용을 얼마나 정확하게 이해할 수 있는지를 결정한다. 엔코더 및 통합 모터 드라이버와 결합된 토크 센서 인터페이스는 전기적 구동(Electrical Actuation)과 실제 기계적 힘(Real Mechanical Force) 사이의 피드백 경로(Feedback Path)를 완성한다.
+
+## 04.06. Joint Module Diagnostics [w/Code]
+
+![](images/image6.png){width="7.268055555555556in" height="7.268055555555556in"}
+
+관절 모듈 진단(Joint Module Diagnostics)은 각각의 사족보행 로봇 액추에이터(Quadruped Actuator)에 대한 전기적, 열적, 센싱, 통신 및 기계적 건전성(Health)을 지속적으로 가시화한다. 관절 모듈은 모터(Motor), 모터 드라이버(Motor Driver), 엔코더(Encoder), 토크 센서(Torque Sensor), 기어박스(Gearbox), 로컬 제어기(Local Controller)를 통합하므로 진단 시스템은 이러한 요소들을 하나의 협조된 서브시스템(Coordinated Subsystem)으로 평가해야 한다. 목표는 단순히 고장을 검출하는 것뿐만 아니라 고장의 심각도(Severity), 지속성(Persistence), 사용 가능한 관절 성능(Available Joint Capability)에 미치는 영향을 판단하는 것이다.
+
+많은 액추에이터 고장은 중앙 컴퓨터(Central Computer)가 안정적으로 식별하고 대응할 수 있는 시간보다 빠르게 진행될 수 있기 때문에 로컬 진단(Local Diagnostics)이 필수적이다. 통합 모터 드라이버(Integrated Motor Driver)는 상전류(Phase Current), 직류 버스 전압(DC-Bus Voltage), 회전자 위치(Rotor Position), 토크 피드백(Torque Feedback), 온도(Temperature), 통신 상태(Communication Status), 내부 제어기 상태(Internal Controller State)를 높은 주기로 관측할 수 있다. 이를 통해 비정상 상태가 불안정한 움직임이나 더 광범위한 시스템 고장으로 확산되기 전에 물리적 발생원 가까이에서 검출할 수 있다.
+
+전기적 모니터링(Electrical Monitoring)은 3상 모터(Three-Phase Motor)와 인버터(Inverter)에서 시작한다. 상전류는 과도한 크기, 불균형(Imbalance), 예상하지 못한 영전류(Zero Current), 비정상 리플(Abnormal Ripple), 명령 토크(Commanded Torque)와의 불일치 여부를 검사할 수 있다. 직류 버스 전압은 저전압(Undervoltage), 과전압(Overvoltage), 회생에 따른 전압 상승(Regenerative Voltage Rise), 과도 교란(Transient Disturbance)을 모니터링할 수 있다. 게이트 드라이버(Gate Driver)와 전력단(Power Stage)의 상태를 추가로 감시하여 스위칭 고장(Switching Fault), 단락(Short Circuit), 비정상적인 반도체 동작(Semiconductor Behavior)을 식별할 수 있다.
+
+모터 권선(Motor Winding), 인버터 반도체(Inverter Semiconductor), 게이트 드라이버 전자장치(Gate-Driver Electronics), 베어링(Bearing), 주변 구조체는 서로 다른 열적 조건(Thermal Condition)에 노출되므로 온도 모니터링(Temperature Monitoring)이 필요하다. 진단 로직(Diagnostic Logic)은 절대 온도뿐만 아니라 온도 상승(Temperature Rise)과 변화율(Rate of Change)도 평가해야 한다. 점진적인 온도 상승에는 먼저 토크 디레이팅(Torque Derating)을 적용할 수 있으며, 급격하거나 과도한 온도 상승이 발생하면 부품의 비가역적 손상(Irreversible Component Damage)을 방지하기 위해 즉각적인 셧다운(Shutdown)이 필요할 수 있다.
+
+엔코더 진단(Encoder Diagnostics)은 손상된 위치 정보(Corrupted Position Information)로부터 모터 제어 루프(Motor-Control Loop)를 보호한다. 로컬 제어기는 유효하지 않은 프레임(Invalid Frame), 통신 손실(Communication Loss), 오래된 측정값(Stale Measurement), 불가능한 각도 변화(Angular Jump), 과도하게 계산된 속도(Excessive Calculated Velocity), 기동 시 위치 불일치(Inconsistent Startup Position)를 검출할 수 있다. 모터 측 엔코더(Motor-Side Encoder)와 출력 측 엔코더(Output-Side Encoder)를 모두 사용하는 경우 두 측정값 사이의 관계를 감시하여 비정상적인 기어박스 움직임, 백래시(Backlash) 변화, 기계적 컴플라이언스(Mechanical Compliance), 변속기 손상(Transmission Damage)을 검출할 수도 있다.
+
+토크 센서 진단(Torque-Sensor Diagnostics)은 관절 동작에 대한 또 하나의 독립적인 관측(Independent Observation)을 제공한다. 제어기는 센서 범위(Sensor Range), 오프셋(Offset), 포화(Saturation), 신호 불연속(Signal Discontinuity), 오래된 데이터, 통신 무결성(Communication Integrity)을 모니터링할 수 있다. 더욱 중요한 것은 측정된 기계적 토크(Measured Mechanical Torque)를 명령 토크와 전류 기반 전자기 토크(Current-Derived Electromagnetic Torque)와 비교할 수 있다는 것이다. 지속적인 불일치는 센서 드리프트(Sensor Drift), 비정상 마찰(Abnormal Friction), 기어박스 성능 저하(Gearbox Degradation), 구조적 손상(Structural Damage), 예상하지 못한 외부 하중(External Loading), 모터 제어 문제를 나타낼 수 있다.
+
+여러 신호를 상호 비교(Cross-Checking)하면 모든 센서를 물리적으로 이중화하지 않고도 분석적 중복성(Analytical Redundancy)을 확보할 수 있다. 모터 전류(Motor Current), 회전자 위치, 관절 위치(Joint Position), 속도(Velocity), 토크(Torque), 버스 전압(Bus Voltage), 온도는 정상 운전 중 대략적인 물리적 관계(Physical Relationship)를 만족해야 한다. 진단 알고리즘(Diagnostic Algorithm)은 이러한 관계를 이용하여 물리적으로 타당하지 않은 신호 조합을 식별하고 실제 외부 교란(External Disturbance)과 전기적 또는 센싱 고장을 구분할 수 있다.
+
+통신 진단(Communication Diagnostics)은 각 관절을 실시간 제어기(Real-Time Controller)에 연결하는 액추에이터 네트워크(Actuator Network)의 신뢰성을 평가한다. 사족보행 로봇 아키텍처에서는 액추에이터 통신 계층(Actuator Communication Level)에 CAN FD와 EtherCAT이 포함된다. 관절 모듈은 타임아웃 이벤트(Timeout Event), 유효하지 않은 프레임, 시퀀스 오류(Sequence Error), 동기화 손실(Synchronization Loss), 통신 카운터(Communication Counter), 명령 최신성(Command Freshness)을 감시하여 오래되거나 손상된 네트워크 데이터가 물리적 움직임을 계속 제어하지 못하도록 해야 한다.
+
+명령 타당성 검사(Command Plausibility Checking)는 네트워크 통신과 토크 생성(Torque Generation) 사이에 추가적인 보호 계층(Protective Layer)을 제공한다. 위치, 속도, 토크 명령은 설정된 관절 제한(Joint Limit), 변화율 제한(Rate Limit), 동작 모드(Operating Mode), 사용 가능한 액추에이터 성능을 기준으로 검사할 수 있다. 갑작스럽고 비현실적인 명령이나 현재 상태와 일치하지 않는 명령은 모터 제어 루프에 직접 전달하지 않고 로컬에서 거부하거나 제한해야 한다.
+
+진단 상태 관리(Diagnostic State Management)는 정상(Normal), 경고(Warning), 출력 제한(Derated), 복구 가능한 고장(Recoverable Fault), 치명적 고장(Critical Fault) 상태를 구분해야 한다. 경고 상태는 움직임에 즉각적인 영향을 주지 않으면서 온도 상승이나 통신 오류 빈도의 증가를 나타낼 수 있다. 출력 제한 운전(Derated Operation)은 제어된 이동을 유지하면서 최대 토크 또는 속도를 감소시킬 수 있다. 복구 가능한 고장은 제어된 리셋(Controlled Reset)을 허용할 수 있지만, 치명적 고장은 신속한 토크 차단(Torque Inhibition)이나 정의된 안전 액추에이터 상태(Safe Actuator State)로의 전환을 요구한다.
+
+하나의 관절을 비활성화하는 것만으로도 사족보행 로봇의 안정성(Stability)이 즉시 변화할 수 있으므로 고장 대응(Fault Response)은 로봇 수준의 영향을 고려해야 한다. 액추에이터가 독립적으로 복잡한 이동 결정을 내려서는 안 되지만 자신의 하드웨어를 신속하게 보호하고 잔여 성능(Remaining Capability)을 전달해야 한다. 이후 상위 감독 제어기(Supervisory Controller)는 하중을 재분배하고, 보행 패턴(Gait)을 변경하고, 속도를 줄이고, 로봇을 안정화하거나, 제어된 정지(Controlled Stop)를 명령하고, 전체 시스템을 안전 상태(Safe Condition)로 전환할 수 있다.
+
+이벤트 로깅(Event Logging)은 유지보수가 시작되기 전에 사라질 수 있는 간헐적 고장(Intermittent Fault)을 이해하는 데 필요한 이력 정보(Historical Context)를 제공한다. 관절 모듈은 중요한 이벤트 전후의 고장 코드(Fault Code), 타임스탬프(Timestamp), 동작 모드, 명령 및 측정 토크, 전류, 버스 전압, 엔코더 상태, 온도, 통신 상태를 저장할 수 있다. 특히 고장 전후 정보(Pre-Fault and Post-Fault Information)를 확보하면 순간적인 충격, 전원 교란(Power Disturbance), 동기화 문제(Synchronization Problem)를 진단하는 데 유용하다.
+
+고장 코드(Fault Code)는 단순히 일반적인 액추에이터 오류(Generic Actuator Error)를 보고하는 것이 아니라 영향을 받은 기능과 상태의 심각도를 함께 식별해야 한다. 진단 정보는 모터 과전류(Motor Overcurrent), 인버터 과열(Inverter Overtemperature), 엔코더 무효 상태(Encoder Invalidity), 토크 센서 타당성 고장(Torque-Sensor Plausibility Failure), 통신 타임아웃(Communication Timeout), 저전압, 과전압, 캘리브레이션 불일치(Calibration Inconsistency)를 구분할 수 있다. 일관된 고장 분류(Fault Classification)는 로봇 수준의 고장 처리, 유지보수 절차, 플릿 수준 분석(Fleet-Level Analysis)을 단순화한다.
+
+기동 진단(Startup Diagnostics)은 능동적인 토크 생성이 시작되기 전에 관절을 신뢰할 수 있는지 확인한다. 초기화 과정에서 전원 레일(Power Rail), 제어기 메모리(Controller Memory), 펌웨어 무결성(Firmware Integrity), 엔코더 유효성(Encoder Validity), 토크 센서 오프셋(Torque-Sensor Offset), 통신 상태, 온도 센서(Temperature Sensor), 캘리브레이션 파라미터(Calibration Parameter), 인버터 보호 회로(Inverter Protection Circuit)를 검사할 수 있다. 필요한 조건이 충족되고 모듈이 정의된 동작 상태(Operational State)에 진입한 이후에만 토크 생성을 활성화해야 한다.
+
+런타임 자가 모니터링(Runtime Self-Monitoring)은 로봇이 이동하는 동안 이러한 검사를 지속한다. 일부 검사는 제어에 영향을 주지 않으면서 연속적으로 수행할 수 있지만, 다른 검사는 관절이 무부하(Unloaded), 정지(Stationary), 또는 서비스 상태(Service State)에 있을 때만 실행해야 한다. 따라서 진단 설계에서는 비침습적 온라인 모니터링(Nonintrusive Online Monitoring)과 능동 서비스 시험(Active Service Test)을 구분하여 고장 검출 자체가 의도하지 않은 움직임을 발생시키거나 이동 안정성을 저해하지 않도록 해야 한다.
+
+잘못된 파라미터(Parameter)는 정상적인 하드웨어를 고장으로 판단하게 하거나 실제 고장 동작을 검출하지 못하게 할 수 있으므로 캘리브레이션 데이터(Calibration Data)는 진단 무결성(Diagnostic Integrity)의 일부이다. 엔코더 오프셋, 토크 센서 계수(Torque-Sensor Coefficient), 모터 파라미터(Motor Parameter), 전류 센서 캘리브레이션(Current-Sensor Calibration), 온도 보상(Temperature Compensation), 관절 제한은 올바른 하드웨어 리비전(Hardware Revision) 및 모듈 식별 정보(Module Identity)와 연결되어야 한다. 따라서 기동 시와 정비 또는 펌웨어 업데이트 이후에는 파라미터의 유효성과 호환성을 검증해야 한다.
+
+추세 모니터링(Trend Monitoring)은 진단 기능을 즉각적인 임계값 검출(Threshold Detection) 이상으로 확장한다. 동작 온도, 동일한 토크를 생성하는 데 필요한 전류, 토크 불일치(Torque Disagreement), 엔코더 편차(Encoder Deviation), 통신 오류, 기계적 마찰(Mechanical Friction)이 점진적으로 증가하면 완전한 고장이 발생하기 전에 진행 중인 성능 저하(Developing Degradation)를 나타낼 수 있다. 이러한 추세는 사족보행 로봇 아키텍처에서 이후 정의되는 예지 정비(Predictive Maintenance)에 필요한 로컬 근거(Local Evidence)를 제공한다.
+
+서비스 진단(Service Diagnostics)은 기술자 또는 원격 엔지니어링 도구(Remote Engineering Tool)가 문제의 발생 위치가 모터, 인버터, 엔코더, 토크 센서, 기어박스, 하네스(Harness), 통신 링크(Communication Link), 전원 공급 장치(Power Supply) 중 어디인지를 판단할 수 있을 만큼 충분한 정보를 제공해야 한다. 표준화된 진단 식별자(Diagnostic Identifier), 모듈 정보(Module Information), 펌웨어 버전(Firmware Version), 캘리브레이션 상태(Calibration Status), 동작 카운터(Operating Counter), 이벤트 이력(Event History)은 문제 해결 시간을 줄이고 관절을 모듈형 기능 단위(Modular Functional Unit)로 교체할 수 있도록 지원한다.
+
+진단 소프트웨어(Diagnostic Software) 자체도 결정론적이고 강건한 동작(Deterministic and Robust Behavior)을 갖도록 설계해야 한다. 정상적인 과도 이벤트(Transient Event)가 반복적인 오고장(False Fault)을 발생시키지 않도록 고장 임계값(Fault Threshold)에 적절한 필터링(Filtering), 히스테리시스(Hysteresis), 지속시간 타이머(Persistence Timer), 상태 의존 로직(State-Dependent Logic)을 적용해야 한다. 동시에 실제로 파괴적인 이벤트에 대한 대응을 필터링으로 지연시켜서는 안 된다. 따라서 빠른 하드웨어 보호(Fast Hardware Protection)와 상대적으로 느린 소프트웨어 진단(Software Diagnostics)은 상호 보완적인 계층으로 동작해야 한다.
+
+궁극적으로 관절 모듈 진단(Joint Module Diagnostics)은 단순히 명령을 수행하는 액추에이터를 자신의 상태와 잔여 성능을 보고할 수 있는 자가 인식형 분산 서브시스템(Self-Aware Distributed Subsystem)으로 전환한다. 전기적 보호(Electrical Protection), 센서 타당성 검사(Sensor Plausibility), 열 상태 감시(Thermal Supervision), 통신 모니터링, 이벤트 로깅, 분석적 중복성, 추세 분석(Trend Analysis)을 결합함으로써 보다 안전한 이동(Safer Locomotion), 빠른 고장 격리(Fault Isolation), 향상된 정비성(Serviceability), 장기 신뢰성(Long-Term Reliability)을 지원한다.
